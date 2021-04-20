@@ -4,6 +4,7 @@ import javax.ws.rs.Consumes;
 
 
 
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -38,9 +39,10 @@ public class OrderService {
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
 	public String readOrders()
-	 {
+	{
 		return ordObj.readOrders(); 
-	 } 
+	 
+	} 
 	
 	
 	
@@ -53,7 +55,9 @@ public class OrderService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String readOrdersbuyer(@PathParam("BuyerID") String BuyerID)
 	 {
+		
 		return ordObj.readOrdersbuyer(BuyerID); 
+		
 	 }
 	
 	
@@ -72,12 +76,14 @@ public class OrderService {
 	 @FormParam("Name") String name,
 	 @FormParam("BuyerID") String buyerID,
 	 @FormParam("productID") String productID,
+	 @FormParam("Proj_id") String projectID,
 	 @FormParam("Price") String price,
 	 @FormParam("qty") int qty)
-	
 	{
-	 String output = ordObj.insertOrder(name,buyerID, productID, price,qty);
-	return output;
+		
+	 String output = ordObj.insertOrder(name,buyerID, productID,projectID, price,qty);
+	 return output;
+	 
 	}
 	
 	
@@ -91,8 +97,11 @@ public class OrderService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updateItem(String itemData)
 	{
+		
+		
 	//Convert the input string to a JSON object
 	 JsonObject itemObject = new JsonParser().parse(itemData).getAsJsonObject();
+	 
 	//Read the values from the JSON object
 	 String orderID = itemObject.get("orderID").getAsString();
 	 int qty = Integer.parseInt(itemObject.get("qty").getAsString());
@@ -116,13 +125,17 @@ public class OrderService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String deleteItem(String itemData)
 	{
+		
 	//Convert the input string to an XML document
 	 Document doc = Jsoup.parse(itemData, "", Parser.xmlParser());
 
+	 
 	//Read the value from the element <itemID>
 	 String orderID = doc.select("orderID").text();
 	 String output = ordObj.deleteOrders(orderID);
-	return output;
+	 return output;
+	 
+	 
 	}
 
 }

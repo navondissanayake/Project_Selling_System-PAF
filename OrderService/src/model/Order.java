@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.Connection;
+
+
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -39,8 +41,8 @@ public class Order {
 		
 		
 		
-		 public String insertOrder(String name ,String buyerID, String productID, String price , int qty  ) {
-		{
+		 public String insertOrder(String name ,String buyerID, String productID ,String projectID ,String price , int qty  ){
+		
 		
 			String output = "";
 	
@@ -60,12 +62,21 @@ public class Order {
 			
 			
 				}
-		
+	
+				
+				
 				String query2 = " select Stock_qty from items where Item_id = ?";
 				PreparedStatement preparedStmt2 = con.prepareStatement(query2);
 				preparedStmt2.setString(1, productID);
 				ResultSet rs = preparedStmt2.executeQuery();
 				
+				
+				
+				//newly added
+				String query3 = " select * from projects where Proj_id = ?";
+				PreparedStatement preparedStmt3 = con.prepareStatement(query3);
+				preparedStmt3.setString(1, projectID);
+				ResultSet rs3 = preparedStmt3.executeQuery();
 				
 	
 				while(rs.next()) {
@@ -86,123 +97,137 @@ public class Order {
 				}
 				
 				
-				if(validate) {
 				
+					//newly added
+					if(validate || (!(projectID.isEmpty()))) {
+					
+			
 		
-	
-	        
-				// create a prepared statement
-				String query = " insert into orders(`orderID`,`Name`,`BuyerID`,`productID`,`Price`,`qty`,`Date`)"+ "values(?,?,?,?,?,?,?)";
-				
-				PreparedStatement preparedStmt = con.prepareStatement(query);
-				
-		
-				
-				// binding values
-				preparedStmt.setInt(1, 0);
-				preparedStmt.setString(2, name);
-				preparedStmt.setString(3, buyerID);
-				preparedStmt.setString(4, productID);
-				preparedStmt.setDouble(5, Double.parseDouble(price));
-				preparedStmt.setInt(6, qty);
-			    preparedStmt.setDate(7, sqlDate);
-				
-				
-				// execute the statement
-		
-				preparedStmt.execute();
-				con.close();
-				output = "Inserted orders successfully";
-				
+		        
+					// create a prepared statement
+					String query = " insert into orders(`orderID`,`Name`,`BuyerID`,`productID`,`Proj_id`,`Price`,`qty`,`Date`)"+ "values(?,?,?,?,?,?,?,?)";
+					
+					PreparedStatement preparedStmt = con.prepareStatement(query);
+					
+			
+					
+					// binding values
+					preparedStmt.setInt(1, 0);
+					preparedStmt.setString(2, name);
+					preparedStmt.setString(3, buyerID);
+					preparedStmt.setString(4, productID);
+					preparedStmt.setString(5, projectID);//newly added
+					preparedStmt.setDouble(6, Double.parseDouble(price));
+					preparedStmt.setInt(7, qty);
+				    preparedStmt.setDate(8, sqlDate);
+					
+					
+					// execute the statement
+			
+					preparedStmt.execute();
+					con.close();
+					
+					
+					output = "Inserted orders successfully";
+					
 					}
+				
+				
+				
+				
 				}
 			
-				catch (Exception e)
-				{
-				output = "Error while inserting the orders.";
-				System.err.println(e.getMessage());
-				}
+					catch (Exception e)
+					{
+						
+					output = "Error while inserting the orders.";
+					System.err.println(e.getMessage());
+					}
+			
 			
 				return output;
-				}
-			
+				
+				
+				
 			}
-	  
+			
+			
 	  
 	    
 	
-	//read orders
-	public String readOrders() {
+	   //read orders
+	   public String readOrders() {
 		
-		
-		String output = "";
-		
-		
-		
-		try {
+			
+			String output = "";
 			
 			
 			
-			Connection con = connect();
-			
-			
-			if (con == null) {
+			try {
 				
-				return "Error while connecting to the database for reading.";
+				
+				
+				Connection con = connect();
+				
+				
+				if (con == null) {
+					
+					return "Error while connecting to the database for reading.";
+				}
+				
+				
+				// Prepare the html table to be displayed
+				output = "<table border='1'><tr><th>Order ID</th><th>Name</th><th>Buyer ID</th>" + "<th>Product ID</th>"+ "<th>Project ID</th>" + "<th>Price</th>"+ "<th>Quantity</th>" + "<th>Order Date</th>" + "<th>Update</th><th>Remove</th></tr>";
+	
+				
+				String query = "select * from orders";
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);
+	
+				
+				
+				// iterate through the rows in the result set
+				while (rs.next()) {
+					String orderID = Integer.toString(rs.getInt("orderID"));
+					String name = rs.getString("Name");
+					String buyerID = rs.getString("BuyerID");
+					String productID = rs.getString("productID");
+					String projectID = rs.getString("Proj_id");
+					String price = Double.toString(rs.getDouble("Price")); 
+					String qty = Integer.toString(rs.getInt("qty"));
+					String orderDate = rs.getString("Date");
+					
+	
+					
+					// Add into the html table
+					output += "<tr><td>" + orderID + "</td>";
+					output += "<td>" + name + "</td>";
+					output += "<td>" + buyerID + "</td>";
+					output += "<td>" + productID + "</td>";
+					output += "<td>" + projectID + "</td>";
+					output += "<td>" + price + "</td>";
+					output += "<td>" + qty + "</td>";
+					output += "<td>" + orderDate + "</td>";
+	
+					// buttons
+					output += "<td><input name='btnUpdate' type='button' value='Update'class='btn btn-secondary'></td>"+ "<td><form method='post' action='items.jsp'>"+ "<input name='btnRemove' type='submit' value='Remove'class='btn btn-danger'>" + "<input name='orderID' type='hidden' value='" + orderID + "'>" + "</form></td></tr>";
+				}
+				con.close();
+				
+	
+				// Complete the html table
+				output += "</table>";
+				
+				
+			} catch (Exception e) {
+				
+				output = "Error while reading the orders.";
+				System.err.println(e.getMessage());
 			}
 			
+			return output;
 			
-			// Prepare the html table to be displayed
-			output = "<table border='1'><tr><th>Order ID</th><th>Name</th><th>Buyer ID</th>" + "<th>Product ID</th>"
-					+ "<th>Price</th>"+ "<th>Quantity</th>" + "<th>Order Date</th>" + "<th>Update</th><th>Remove</th></tr>";
-
-			
-			String query = "select * from orders";
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-
-			
-			
-			// iterate through the rows in the result set
-			while (rs.next()) {
-				String orderID = Integer.toString(rs.getInt("orderID"));
-				String name = rs.getString("Name");
-				String buyerID = rs.getString("BuyerID");
-				String productID = rs.getString("productID");
-				String price = Double.toString(rs.getDouble("Price")); 
-				String qty = Integer.toString(rs.getInt("qty"));
-				String orderDate = rs.getString("Date");
-				
-
-				
-				// Add into the html table
-				output += "<tr><td>" + orderID + "</td>";
-				output += "<td>" + name + "</td>";
-				output += "<td>" + buyerID + "</td>";
-				output += "<td>" + productID + "</td>";
-				output += "<td>" + price + "</td>";
-				output += "<td>" + qty + "</td>";
-				output += "<td>" + orderDate + "</td>";
-
-				// buttons
-				output += "<td><input name='btnUpdate' type='button' value='Update'class='btn btn-secondary'></td>"+ "<td><form method='post' action='items.jsp'>"+ "<input name='btnRemove' type='submit' value='Remove'class='btn btn-danger'>"
-						+ "<input name='orderID' type='hidden' value='" + orderID + "'>" + "</form></td></tr>";
-			}
-			con.close();
-			
-
-			// Complete the html table
-			output += "</table>";
-			
-			
-		} catch (Exception e) {
-			
-			output = "Error while reading the orders.";
-			System.err.println(e.getMessage());
 		}
-		
-		return output;
-	}
 	
 	
 	
@@ -240,12 +265,6 @@ public class Order {
 			output = "<table border='1'><tr><th>Order ID</th><th>Name</th><th>Buyer ID</th><th>Product ID</th>"+ "<th>Price</th>" + "<th>Quantity</th>" + "<th>Order Date</th>" +"<th>Update</th><th>Remove</th></tr>";
 
 			
-			//String query = "select * from orders where BuyerID =?";
-			
-			//String query = "select * from orders where BuyerID=' " + BuyerID + "'" ;
-			
-			//Statement stmt = con.createStatement();
-		   // ResultSet rs = stmt.executeQuery(query);
 
 			String query = "select * from orders where BuyerID =?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
@@ -256,8 +275,6 @@ public class Order {
 		  
 			
 			// iterate through the rows in the result set
-			
-			
 			while (rs.next()) {
 				
 				
@@ -286,7 +303,7 @@ public class Order {
 				
 				// buttons
 				output += "<td><input name='btnUpdate' type='button' value='Update'class='btn btn-secondary'></td>"
-						+ "<td><form method='post' action='items.jsp'>"
+						+ "<td><form method='post' action='order.jsp'>"
 						+ "<input name='btnRemove' type='submit' value='Remove'class='btn btn-danger'>"
 						+ "<input name='orderID' type='hidden' value='" + orderID + "'>" + "</form></td></tr>";
 			}
@@ -296,9 +313,13 @@ public class Order {
 			// Complete the html table
 			output += "</table>";
 		} catch (Exception e) {
+			
+			
 			output = "Error while reading the orders.";
 			System.err.println(e.getMessage());
 		}
+		
+		
 		return output;
 	}
 	
@@ -315,6 +336,8 @@ public class Order {
 		
 		
 		String output = "";
+		
+		
 		try {
 			
 			
@@ -322,6 +345,7 @@ public class Order {
 			
 			
 			if (con == null) {
+				
 				return "Error while connecting to the database for updating.";
 			}
 			
@@ -340,12 +364,17 @@ public class Order {
 			preparedStmt.execute();
 			con.close();
 			
-			output = "Updated successfully";
+			
+			output = "Quantity Updated  successfully";
 			
 		} catch (Exception e) {
+			
+			
 			output = "Error while updating the order.";
 			System.err.println(e.getMessage());
 		}
+		
+		
 		return output;
 	}
 	
@@ -366,11 +395,13 @@ public class Order {
 		
 		String output = "";
 		
+		
 		try {
 			
 			Connection con = connect();
 			
 			if (con == null) {
+				
 				return "Error while connecting to the database for deleting.";
 			}
 			
@@ -394,7 +425,9 @@ public class Order {
 			
 			output = "Error while deleting the order.";
 			System.err.println(e.getMessage());
+			
 		}
+		
 		return output;
 	}
 	
