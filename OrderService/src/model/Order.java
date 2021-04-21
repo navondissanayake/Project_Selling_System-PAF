@@ -263,7 +263,7 @@ public class Order {
 			
 			
 			// Prepare the html table to be displayed
-			output = "<table border='1'><tr><th>Order ID</th><th>Name</th><th>Buyer ID</th><th>Product ID</th>"+ "<th>Price</th>" + "<th>Quantity</th>" + "<th>Order Date</th>" +"<th>Update</th><th>Remove</th></tr>";
+			output = "<table border='1'><tr><th>Order ID</th><th>Name</th><th>Buyer ID</th><th>Product ID</th><th>Project ID</th>"+ "<th>Price</th>" + "<th>Quantity</th>" + "<th>Order Date</th>" +"<th>Update</th><th>Remove</th></tr>";
 
 			
 
@@ -283,6 +283,7 @@ public class Order {
 				String name = rs.getString("Name");
 				String buyerID = rs.getString("BuyerID");
 				String productID = rs.getString("productID");
+				String projID = rs.getString("Proj_id");
 				String price = Double.toString(rs.getDouble("Price")); 
 				String qty = Integer.toString(rs.getInt("qty"));
 				String orderDate = rs.getString("Date");
@@ -295,6 +296,7 @@ public class Order {
 				output += "<td>" + name + "</td>";
 				output += "<td>" + buyerID + "</td>";
 				output += "<td>" + productID + "</td>";
+				output += "<td>" + projID + "</td>";
 				output += "<td>" + price + "</td>";
 				output += "<td>" + qty + "</td>";
 				output += "<td>" + orderDate + "</td>";

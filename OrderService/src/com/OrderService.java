@@ -51,7 +51,7 @@ public class OrderService {
 	
 	//view each buyer order details
 	@GET
-	@Path("/{BuyerID}")
+	@Path("/orderlist/{BuyerID}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String viewBuyerOrders(@PathParam("BuyerID") String BuyerID)
 	 {
