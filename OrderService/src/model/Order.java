@@ -3,6 +3,7 @@ package model;
 import java.sql.Connection;
 
 
+
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -40,8 +41,8 @@ public class Order {
 	  
 		
 		
-		
-		 public String insertOrder(String name ,String buyerID, String productID ,String projectID ,String price , int qty  ){
+		// add orders
+		 public String addOrders(String name ,String buyerID, String productID ,String projectID ,String price , int qty  ){
 		
 		
 			String output = "";
@@ -155,8 +156,8 @@ public class Order {
 	  
 	    
 	
-	   //read orders
-	   public String readOrders() {
+	   //view orders
+	   public String viewOrders() {
 		
 			
 			String output = "";
@@ -241,7 +242,7 @@ public class Order {
 
 	
 	//view each  buyer order details
-	public String readOrdersbuyer(String BuyerID){
+	public String viewBuyerOrders(String BuyerID){
 		
 		
 		String output = "";
@@ -331,8 +332,8 @@ public class Order {
 	
 	
 	
-	//update order
-	public String updateOrderQuantity(String ID, int qty) {
+	//update order items quantity
+	public String updateOrders(String ID, int qty) {
 		
 		
 		String output = "";

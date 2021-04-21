@@ -38,9 +38,9 @@ public class OrderService {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public String readOrders()
+	public String ViewOrders()
 	{
-		return ordObj.readOrders(); 
+		return ordObj.viewOrders(); 
 	 
 	} 
 	
@@ -53,10 +53,10 @@ public class OrderService {
 	@GET
 	@Path("/{BuyerID}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String readOrdersbuyer(@PathParam("BuyerID") String BuyerID)
+	public String viewBuyerOrders(@PathParam("BuyerID") String BuyerID)
 	 {
 		
-		return ordObj.readOrdersbuyer(BuyerID); 
+		return ordObj.viewBuyerOrders(BuyerID); 
 		
 	 }
 	
@@ -72,7 +72,7 @@ public class OrderService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertOrder(
+	public String addOrders(
 	 @FormParam("Name") String name,
 	 @FormParam("BuyerID") String buyerID,
 	 @FormParam("productID") String productID,
@@ -81,7 +81,7 @@ public class OrderService {
 	 @FormParam("qty") int qty)
 	{
 		
-	 String output = ordObj.insertOrder(name,buyerID, productID,projectID, price,qty);
+	 String output = ordObj.addOrders(name,buyerID, productID,projectID, price,qty);
 	 return output;
 	 
 	}
@@ -95,7 +95,7 @@ public class OrderService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updateItem(String itemData)
+	public String updateOrders(String itemData)
 	{
 		
 		
@@ -106,7 +106,7 @@ public class OrderService {
 	 String orderID = itemObject.get("orderID").getAsString();
 	 int qty = Integer.parseInt(itemObject.get("qty").getAsString());
 
-	 String output = ordObj.updateOrderQuantity(orderID, qty);
+	 String output = ordObj.updateOrders(orderID, qty);
 	 
 	 
 	 return output;
@@ -123,7 +123,7 @@ public class OrderService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteItem(String itemData)
+	public String deleteOrders(String itemData)
 	{
 		
 	//Convert the input string to an XML document
