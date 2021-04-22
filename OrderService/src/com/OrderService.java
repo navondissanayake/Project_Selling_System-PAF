@@ -1,3 +1,4 @@
+//IT19209944 - W.B.W.M.R.U.P.U.Aluvihare
 package com;
 
 import javax.ws.rs.Consumes;
@@ -30,14 +31,23 @@ import model.Order;
 public class OrderService {
 	
 	
+	
+	/*
+	 * initialize single object from Order class
+	 */
 	Order ordObj = new Order();
 
 	
+
 	
-	//view order details
+	
+	/*
+	 * GET request and view all details
+	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
+	
 	public String ViewOrders()
 	{
 		return ordObj.viewOrders(); 
@@ -49,16 +59,19 @@ public class OrderService {
 	
 	
 	
-	//view each buyer order details
+	/*
+	 * GET request and view each buyer ordered details
+	 */
 	@GET
 	@Path("/orderlist/{BuyerID}")
 	@Produces(MediaType.TEXT_PLAIN)
+	
 	public String viewBuyerOrders(@PathParam("BuyerID") String BuyerID)
-	 {
+	{
 		
 		return ordObj.viewBuyerOrders(BuyerID); 
 		
-	 }
+	}
 	
 	
 
@@ -67,11 +80,14 @@ public class OrderService {
 	
 	
 	
-	//insert orders
+	/*
+	 * POST request and add ordered details
+	 */
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
+	
 	public String addOrders(
 	 @FormParam("Name") String name,
 	 @FormParam("BuyerID") String buyerID,
@@ -81,8 +97,8 @@ public class OrderService {
 	 @FormParam("qty") int qty)
 	{
 		
-	 String output = ordObj.addOrders(name,buyerID, productID,projectID, price,qty);
-	 return output;
+	  String output = ordObj.addOrders(name,buyerID, productID,projectID, price,qty);
+	  return output;
 	 
 	}
 	
@@ -90,27 +106,30 @@ public class OrderService {
 	
 	
 	
-	//update order details
+	/*
+	 * PUT request and update ordered details
+	 */
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
+	
 	public String updateOrders(String itemData)
 	{
 		
 		
-	//Convert the input string to a JSON object
-	 JsonObject itemObject = new JsonParser().parse(itemData).getAsJsonObject();
-	 
-	//Read the values from the JSON object
-	 String orderID = itemObject.get("orderID").getAsString();
-	 int qty = Integer.parseInt(itemObject.get("qty").getAsString());
-
-	 String output = ordObj.updateOrders(orderID, qty);
-	 
-	 
-	 return output;
-	 
+		 //Convert the input string to a JSON object
+		 JsonObject itemObject = new JsonParser().parse(itemData).getAsJsonObject();
+		 
+		 //Read the values from the JSON object
+		 String orderID = itemObject.get("orderID").getAsString();
+		 int qty = Integer.parseInt(itemObject.get("qty").getAsString());
+	
+		 String output = ordObj.updateOrders(orderID, qty);
+		 
+		 
+		 return output;
+		 
 	}
 	
 	
@@ -118,22 +137,25 @@ public class OrderService {
 	
 	
 	
-	//delete order details
+	/*
+	 * DELETE request and delete ordered details
+	 */
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.TEXT_PLAIN)
+	
 	public String deleteOrders(String itemData)
 	{
 		
-	//Convert the input string to an XML document
-	 Document doc = Jsoup.parse(itemData, "", Parser.xmlParser());
+		//Convert the input string to an XML document
+		Document doc = Jsoup.parse(itemData, "", Parser.xmlParser());
 
 	 
-	//Read the value from the element <itemID>
-	 String orderID = doc.select("orderID").text();
-	 String output = ordObj.deleteOrders(orderID);
-	 return output;
+		//Read the value from the element <itemID>
+		String orderID = doc.select("orderID").text();
+		String output = ordObj.deleteOrders(orderID);
+		return output;
 	 
 	 
 	}
